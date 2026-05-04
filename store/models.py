@@ -50,12 +50,14 @@ class User(AbstractBaseUser, PermissionsMixin):
 # ── PRODUCT ──
 class Product(models.Model):
     CATEGORY_CHOICES = [
-        ('Sharee',       'Sharee'),
-        ('Kurti',        'Kurti'),
-        ('Dupatta Sets', 'Dupatta Sets'),
-        ('Sleepwear',    'Sleepwear'),
-        ('Lehengas',     'Lehengas'),
-        ('Blouses',      'Blouses'),
+        ('Sharee', 'Sharee'),
+        ('Kurti', 'Kurti'),
+        ('Skirt Top', 'Skirt Top'),
+        ('Plazzo Top', 'Plazzo Top'),
+        ('Cord Set', 'Cord Set'),
+        ('Biyer Kulo', 'Biyer Kulo'),
+        ('Biyer Mukut', 'Biyer Mukut'),
+        ('Gachkouto', 'Gachkouto'),
     ]
 
     name         = models.CharField(max_length=255)
