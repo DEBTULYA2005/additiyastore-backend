@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 from pathlib import Path
 import os
 import environ
+import dj_database_url
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -104,15 +105,19 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Supabase Database.
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': env('DB_PASSWORD'),
-        'HOST': 'db.vufhngcglysqfifnuhgb.supabase.co',
-        'PORT': '5432',
-    }
+    'default': dj_database_url.parse(env('DATABASE_URL'))
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'postgres',
+#         'USER': 'postgres',
+#         'PASSWORD': env('DB_PASSWORD'),
+#         'HOST': 'db.vufhngcglysqfifnuhgb.supabase.co',
+#         'PORT': '5432',
+#     }
+# }
 
 # Image Storage.......
 
