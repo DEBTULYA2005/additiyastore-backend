@@ -79,6 +79,18 @@ class Product(models.Model):
     size_options   = models.CharField(max_length=255, blank=True, default='')
     colour_options = models.CharField(max_length=255, blank=True, default='')
 
+    def save(self, *args, **kwargs):
+    # auto-calculate old_price from discount
+        if self.discount and self.discount > 0:
+            # old_price = price before discount
+            # price = old_price * (1 - discount/100)
+            # so old_price = price / (1 - discount/100)
+            self.old_price = round(float(self.price) / (1 - float(self.discount) / 100), 2)
+        else:
+            self.old_price = None
+            self.discount  = 0
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.name
 
