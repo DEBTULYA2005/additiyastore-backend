@@ -34,14 +34,14 @@ class User(AbstractBaseUser, PermissionsMixin):
     role       = models.CharField(max_length=10, choices=ROLE_CHOICES, default='customer')
 
     is_active  = models.BooleanField(default=True)
-    is_staff   = models.BooleanField(default=False)  # required for Django admin
+    is_staff   = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
     objects    = UserManager()
 
-    USERNAME_FIELD  = 'email'           # login with email
-    REQUIRED_FIELDS = ['username']      # required for createsuperuser
+    USERNAME_FIELD  = 'email'
+    REQUIRED_FIELDS = ['username']
 
     def __str__(self):
         return f"{self.email} ({self.role})"
@@ -50,28 +50,47 @@ class User(AbstractBaseUser, PermissionsMixin):
 # ── PRODUCT ──
 class Product(models.Model):
     CATEGORY_CHOICES = [
-        ('Sharee', 'Sharee'),
-        ('Kurti', 'Kurti'),
-        ('Skirt Top', 'Skirt Top'),
-        ('Plazzo Top', 'Plazzo Top'),
-        ('Cord Set', 'Cord Set'),
-        ('Biyer Kulo', 'Biyer Kulo'),
-        ('Biyer Mukut', 'Biyer Mukut'),
-        ('Gachkouto', 'Gachkouto'),
+        ('Sharee',       'Sharee'),
+        ('Kurti',        'Kurti'),
+        ('Dupatta Sets', 'Dupatta Sets'),
+        ('Skirt Top',    'Skirt Top'),
+        ('Plazzo Top',   'Plazzo Top'),
+        ('Cord Set',     'Cord Set'),
+        ('Biyer Kulo',   'Biyer Kulo'),
+        ('Biyer Mukut',  'Biyer Mukut'),
+        ('Gachkouto',    'Gachkouto'),
     ]
 
-    name         = models.CharField(max_length=255)
-    category     = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
-    price        = models.DecimalField(max_digits=10, decimal_places=2)
-    old_price    = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    discount     = models.FloatField(default=0)
-    image        = models.ImageField(upload_to='products/', blank=True)
-    rating       = models.FloatField(default=0)
-    review_count = models.IntegerField(default=0)
-    created_at   = models.DateTimeField(auto_now_add=True)
+    name           = models.CharField(max_length=255)
+    category       = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
+    price          = models.DecimalField(max_digits=10, decimal_places=2)
+    old_price      = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    discount       = models.FloatField(default=0)
+    image          = models.ImageField(upload_to='products/', blank=True)
+    rating         = models.FloatField(default=0)
+    review_count   = models.IntegerField(default=0)
+    created_at     = models.DateTimeField(auto_now_add=True)
+
+    # ── NEW FIELDS ──
+    description    = models.TextField(blank=True, default='')
+    material       = models.CharField(max_length=255, blank=True, default='')
+    length         = models.CharField(max_length=100, blank=True, default='')
+    neck           = models.CharField(max_length=100, blank=True, default='')
+    size_options   = models.CharField(max_length=255, blank=True, default='')
+    colour_options = models.CharField(max_length=255, blank=True, default='')
 
     def __str__(self):
         return self.name
+
+
+# ── PRODUCT EXTRA IMAGES ──
+class ProductImage(models.Model):
+    product    = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
+    image      = models.ImageField(upload_to='products/extra/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Image for {self.product.name}"
 
 
 # ── CART ──

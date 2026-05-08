@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Product, Cart, CartItem, Order, OrderItem
+from .models import User, Product, ProductImage, Cart, CartItem, Order, OrderItem
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -14,7 +14,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             email    = validated_data['email'],
             username = validated_data['username'],
             password = validated_data['password'],
-            role     = 'customer',   # ✅ always customer on register
+            role     = 'customer',
         )
 
 
@@ -24,19 +24,38 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'email', 'role']
 
 
+# ── PRODUCT IMAGE ──
+class ProductImageSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField(use_url=True)
+
+    class Meta:
+        model  = ProductImage
+        fields = ['id', 'image', 'uploaded_at']
+
+
+# ── PRODUCT ──
 class ProductSerializer(serializers.ModelSerializer):
-    image = serializers.ImageField(required=False, use_url=True)
+    image  = serializers.ImageField(required=False, use_url=True)
+    images = ProductImageSerializer(many=True, read_only=True)  # nested extra images
+
     class Meta:
         model  = Product
-        fields = '__all__'
+        fields = [
+            'id', 'name', 'category', 'price', 'old_price', 'discount',
+            'image', 'images',                          # main image + extras
+            'rating', 'review_count',
+            'description', 'material', 'length',        # new fields
+            'neck', 'size_options', 'colour_options',   # new fields
+            'created_at',
+        ]
 
 
 class CartItemSerializer(serializers.ModelSerializer):
-    product  = ProductSerializer(read_only=True)
+    product    = ProductSerializer(read_only=True)
     product_id = serializers.PrimaryKeyRelatedField(
         queryset=Product.objects.all(), source='product', write_only=True
     )
-    subtotal = serializers.SerializerMethodField()
+    subtotal   = serializers.SerializerMethodField()
 
     class Meta:
         model  = CartItem
